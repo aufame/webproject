@@ -231,12 +231,12 @@ function update_firmware(mode){
   <table width="99%" border="2" align="center" cellpadding="1" cellspacing="1" bordercolor="#FFFFFF" bgcolor="#CCCCCC">
   <tr height="20" bgcolor="#F7F7F7" align="center"> 
     <td WIDTH="11%" background="images/topbg.gif"><strong>设备类型</strong></td>
+    <td WIDTH="12%" background="images/topbg.gif"><strong>ROM升级文件</strong></td>
     <td WIDTH="8%" background="images/topbg.gif"><strong>版本号</strong></td>
-    <td WIDTH="12%" background="images/topbg.gif"><strong>ROM文件</strong></td>
     <td WIDTH="10%" background="images/topbg.gif"><strong>文件大小 (Bytes)</strong></td>
     <td WIDTH="15%" background="images/topbg.gif"><strong>上传时间</strong></td>
+    <td WIDTH="11%" background="images/topbg.gif"><strong>FLASH升级文件</strong></td>
     <td WIDTH="8%" background="images/topbg.gif"><strong>版本号</strong></td>
-    <td WIDTH="11%" background="images/topbg.gif"><strong>FLASH文件</strong></td>
     <td WIDTH="10%" background="images/topbg.gif"><strong>文件大小 (Bytes)</strong></td>
     <td WIDTH="15%" background="images/topbg.gif"><strong>上传时间</strong></td>
   </tr><form name="groupform" method="post"><input type="hidden" name="groupname"><input type="hidden" name="url">
@@ -248,12 +248,12 @@ $res=$conn->query("select * from `od_devgroup` where property>0 order by propert
 foreach($res as $row){
   echo '<tr height=28 align=center bgcolor=#FFFFFF onMouseOut="this.bgColor=\'#FFFFFF\';" onMouseOver="this.bgColor=\'#FFFF00\';">';
   echo '<td align=left class="groupname"><input type=radio name="selectid" value="'.$row['id'].'"><span id="sn'.$row['id'].'"> '.$row['groupname'].'</span></td>';
-  echo "<td id='v0_{$row['id']}'>".sprintf('%0.1f',$row['rom_ver']).'</td>';
   echo "<td><a href='{$row['rom_url']}' target='_blank'>".mg_checkFile($row['rom_url'],$filesize,$filetime).'</a></td>';
+  echo "<td id='v0_{$row['id']}'>".sprintf('%0.1f',$row['rom_ver']).'</td>';
   echo '<td>'.number_format($filesize).'</td>';
   echo '<td>'.date("Y-m-d H:i:s",$filetime).'</td>';
-  echo "<td id='v1_{$row['id']}'>".sprintf('%0.1f',$row['flash_ver']).'</td>';
   echo "<td><a href='{$row['flash_url']}' target='_blank'>".mg_checkFile($row['flash_url'],$filesize,$filetime).'</a></td>';
+  echo "<td id='v1_{$row['id']}'>".sprintf('%0.1f',$row['flash_ver']).'</td>';
   echo '<td>'.number_format($filesize).'</td>';
   echo '<td>'.date("Y-m-d H:i:s",$filetime).'</td>';
   echo "</tr>\n";
