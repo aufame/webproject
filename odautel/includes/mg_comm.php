@@ -97,9 +97,14 @@ function document_download($url,$savefile){
 function mg_checkFile($fpath,&$filesize,&$filetime) {
   //date_default_timezone_set("PRC");  
   if($fpath){
-    if($fpath[0]=='/')$fpath=$_SERVER['DOCUMENT_ROOT'].$fpath;
-    else $fpath=realpath($fpath);
-    if(file_exists($fpath)){
+    if($fpath[0]=='/'){
+      $fpath=$_SERVER['DOCUMENT_ROOT'].$fpath;
+      if(!file_exists($fpath))$fpath=null;
+    }
+    else{
+      $fpath=realpath($fpath);
+    }
+    if($fpath){
        $filesize=filesize($fpath);
        $filetime=filemtime($fpath);
        return basename($fpath);
@@ -110,6 +115,19 @@ function mg_checkFile($fpath,&$filesize,&$filetime) {
   return '';
 }
 
+function mg_CheckFileSize($fpath) {
+  if($fpath){
+    if($fpath[0]=='/'){
+      $fpath=$_SERVER['DOCUMENT_ROOT'].$fpath;
+      if(!file_exists($fpath)) $fpath=null;
+    }
+    else{
+      $fpath=realpath($fpath);
+    }
+    if($fpath)return filesize($fpath);
+  }
+  return false;
+}
 
 ?>
 

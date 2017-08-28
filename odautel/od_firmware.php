@@ -4,21 +4,24 @@ OpenDB();//open database
 //CheckMenu('盒子分组');
 
 function add_new() {
+  global $conn;
   $property=$_POST['property'];
-  $types = strtoupper(FilterText(trim($_POST['types'])));
-  $subtype = FilterText(trim($_POST['subtype']));
+  $devcat = $_POST['devcat'];
   $version= FilterText(trim($_POST['version']));
-  if(($property=='1'||$property=='2')&& $types && $subtype && $version){
-    $row=$GLOBALS['conn']->query("select id from `od_firmware` where types='$types' and subtype='$subtype' and ver='$version' and property=$property")->fetch();
-    if($row){
-      PageReturn("无法创建固件，对应的固件版本已经存在！");
-    }
-    else {
-      $sql="`od_firmware` set types='$types',subtype='$subtype',ver='$version',property=$property";
-     if($GLOBALS['conn']->exec("update $sql where property=0 order by id asc limit 1")==0) $GLOBALS['conn']->exec("insert into $sql");
-      $model=($property=='1')?'ROM':'FLS';
-      PageReturn("固件{$types}-{$subtype}-{$model}创建成功！");
-    }
+  if(($property=='1'||$property=='2')&& is_numeric($devcat) && $devcat>0 && $version){
+     $row=$conn->query('select types,subtype from od_devcat where id='.$devcat,PDO::FETCH_NUM)->fetch();
+     if($row){
+       $types=$row[0];
+       $subtype=$row[1];
+       $row=$conn->query("select id from `od_firmware` where types='$types' and subtype='$subtype' and ver='$version' and property=$property")->fetch();
+       if($row) PageReturn("无法创建固件，对应的固件版本已经存在！");
+       else{
+         $sql="`od_firmware` set types='$types',subtype='$subtype',ver='$version',property=$property";
+         if($conn->exec("update $sql where property=0 order by id asc limit 1")==0) $conn->exec("insert into $sql");
+         $model=($property=='1')?'ROM':'FLS';
+         PageReturn("固件{$types}-{$subtype}-{$model}创建成功！");
+       }
+     }
   }
 }
 
@@ -29,7 +32,7 @@ function delete_record() {
     if($path){
       if (substr($path, 0, 1) == '/') $path=$_SERVER['DOCUMENT_ROOT'].$path;
       else $path=realpath($path);
-      unlink($path); 
+      @unlink($path); 
     }
     $GLOBALS['conn']->exec("update `od_firmware` set property=0,url=null where id=$selectid");
     PageReturn("所选固件删除成功！");
@@ -114,19 +117,22 @@ function update_firmware(){
   var myform=document.forms["groupform"];
   var selectid=RadioboxSelected(myform.selectid);
   if(selectid){
-     var types=GetInnerText('t'+selectid).trim();
+     var devcat=GetInnerText('t'+selectid).trim();
      var version=GetInnerText('v'+selectid).trim();
-     var model=(types.indexOf("ROM")>0)?'ROM':'FLS';
+     var model=(devcat.indexOf("ROM")>0)?'ROM':'FLS';
      var doConfirm=function(version){
        if(version!=null){
          version=version.trim();
-         if(types && CheckFirmwareVersion(version)){
-           var bin_file=types.replace(model,selectid).replace(/\./g,'_').replace(/-/g,'_').toLowerCase();
+         if(devcat && CheckFirmwareVersion(version)){
+           $types=devcat.substr(0,devcat.indexOf('-')); 
+           //var bin_file=devcat.replace(model,selectid).replace(/\./g,'_').replace(/-/g,'_').toLowerCase();
+           var bin_file=$types.toUpperCase()+'_'+selectid;
            var upload_callback=function(ret) { 
              myform.action="?action=upgrade&version="+version;
              myform.url.value=ret;
              myform.submit();
            }
+ 
            showUploadDialog("APP",bin_file,upload_callback);
          }
          else{
@@ -145,15 +151,14 @@ function update_firmware(){
 function add_new() {
   var onSelectGroup=function(myform){
       if(myform){
-         if(myform.types.value.trim().length<3){
-            alert("设备类型名称太短!");
-            myform.types.focus();
-            return false;
+         if(myform.devcat.value=='0'){
+           alert("选择固件类型");
+           myform.devcat.focus();
+           return false;
          }
-         var subtype=myform.subtype.value.trim();
-         if(subtype.length<3 || isNaN(subtype)){
-            alert("IAP版本号无效");
-            myform.subtype.focus();
+         else if(myform.property.value=='0'){
+            alert("选择固件类型");
+            myform.property.focus();
             return false;
          }
          var version=myform.version.value.trim();
@@ -169,7 +174,12 @@ function add_new() {
          }
     }
   }
-  var newusr_html='<form method="post" style="margin:0px"><table width="380" height="100%" border="0" align="center"><tr height="20"><td width="60" align="right">固件类型</td><td width="160"><input type="text" name="types" maxlength=32 style="width:60px;text-align:center">-<input type="text" name="subtype" maxlength=5 style="width:35px;text-align:center" value="1.0" title="IAP Version">-<select name="property" size=1 style="width:50px"><option value="1">ROM</option><option value="2">FLS</option></select></td><td align="right">固件版本</td><td><input type="text" name="version" maxlength=10 style="width:60px" value="0.0.1"></td></tr><tr><td align=center colspan="4"><input type=button value=" 确定 " onclick="self.CloseDialog(this.form)"> &nbsp; <input type="button" value=" 取消 " onclick="self.CloseDialog();"></td></tr></form></table>';
+  var newusr_html='<form method="post" style="margin:0px"><table width="360" height="100%" border="0" align="center"><tr height="20"><td width="60" align="right">固件类型</td><td width="160"><select name="devcat" style="width:90px"><option value="0">--选择--</option><?php 
+  $res=$conn->query('select id,types,subtype from od_devcat order by types,subtype',PDO::FETCH_NUM);
+  foreach($res as $row){
+    echo '<option value="'.$row[0].'">'.$row[1].'-'.$row[2].'</option>';
+  } 
+?></select>-<select name="property" size=1 style="width:50px"><option value="0">选择-</option><option value="1">ROM</option><option value="2">FLS</option></select></td><td align="right">固件版本</td><td><input type="text" name="version" maxlength=10 style="width:60px" value="0.0.1"></td></tr><tr><td align=center colspan="4"><input type=button value=" 确定 " onclick="self.CloseDialog(this.form)"> &nbsp; <input type="button" value=" 取消 " onclick="self.CloseDialog();"></td></tr></form></table>';
   ShowDialog("新建固件",newusr_html,400,150,onSelectGroup);
 }
 

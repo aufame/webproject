@@ -1,7 +1,7 @@
 ﻿<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>管理后台－喵星科技</title>
+<title>管理后台－欧达电子</title>
 <?php
 if(@$_COOKIE['odautel']['admin'] && @$_COOKIE['odautel']['popedom'])
 {?>
@@ -92,10 +92,10 @@ body,td,th {
 </table>
 <table width="917" border="0" align="center" cellpadding="0" cellspacing="0" background="images/2011_06.jpg" height="181" style="background-repeat:no-repeat; background-position:top">
   <tr>
-    <td height="48" align="left" valign="top" scope="col"><div style="line-height:32px;padding-left:490px;">版权所有：南京喵星科技有限公司</div></td>
+    <td height="48" align="left" valign="top" scope="col"><div style="line-height:32px;padding-left:490px;">版权所有：欧达电子</div></td>
   </tr>
   <tr>
-  	<td align="center" valign="top" style="color:#888888;font-size:18px">Copyright @<?php $thisYear=date("Y");$nextYear=(int)$thisYear+1;echo "$thisYear~$nextYear";?> Miaow Planet Technology CO.,LTD.</td>
+  	<td align="center" valign="top" style="color:#888888;font-size:18px">Copyright @<?php $thisYear=date("Y");$nextYear=(int)$thisYear+1;echo "$thisYear~$nextYear";?> xxxxxx Technology CO.,LTD.</td>
   </tr>
 </table>
 </body>

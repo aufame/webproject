@@ -1,7 +1,7 @@
 <?php require("includes/dbconn.php");
 CheckLogin();
 OpenDB();
-CheckMenu('超级用户');
+//CheckMenu('超级用户');
 if(($mode=@$_GET["mode"])) {
    if($mode=="modify") {
       $adminid=$_POST["adminid"];
