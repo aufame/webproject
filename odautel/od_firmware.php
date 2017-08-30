@@ -202,11 +202,10 @@ function add_new() {
 <!--Content begin-----------------------------------------------------------------------------------------------------------> 
   <table width="99%" border="2" align="center" cellpadding="1" cellspacing="1" bordercolor="#FFFFFF" bgcolor="#CCCCCC">
   <tr height="20" bgcolor="#F7F7F7" align="center"> 
-    <td WIDTH="20%" background="images/topbg.gif" align="left" style="padding-left:45px"><strong>固件类型</strong></td>
-    <td WIDTH="20%" background="images/topbg.gif"><strong>固件版本</strong></td>
-    <td WIDTH="20%" background="images/topbg.gif"><strong>文件名</strong></td>
-    <td WIDTH="20%" background="images/topbg.gif"><strong>文件大小 (Bytes)</strong></td>
-    <td WIDTH="20%" background="images/topbg.gif"><strong>上传时间</strong></td>
+    <td WIDTH="25%" background="images/topbg.gif" align="left" style="padding-left:45px"><strong>固件类型</strong></td>
+    <td WIDTH="25%" background="images/topbg.gif"><strong>固件版本</strong></td>
+    <td WIDTH="25%" background="images/topbg.gif"><strong>固件大小 (Bytes)</strong></td>
+    <td WIDTH="25%" background="images/topbg.gif"><strong>上传时间</strong></td>
   </tr><form name="groupform" method="post"><input type="hidden" name="groupname"><input type="hidden" name="url">
 <?php 
 
@@ -216,8 +215,7 @@ $res=$conn->query("select * from `od_firmware` where property>0 order by types,s
 foreach($res as $row){
   echo '<tr height=28 align=center bgcolor=#FFFFFF onMouseOut="this.bgColor=\'#FFFFFF\';" onMouseOver="this.bgColor=\'#FFFF00\';">';
   echo '<td align=left class="groupname"><input type=radio name="selectid" value="'.$row['id'].'"> <span id="t'.$row['id'].'">'.$row['types'].'-'.$row['subtype'].'-'.(($row['property']==2)?'FLS':'ROM').'</span></td>';
-  echo " <td><span id='v{$row['id']}'>{$row['ver']}</span></td>";
-  echo "<td><a href='{$row['url']}' target='_blank'>".mg_checkFile($row['url'],$filesize,$filetime).'</a></td>';
+  echo ' <td><a href="'.$row['url'].'" title="'.mg_checkFile($row['url'],$filesize,$filetime).'"><span id=“v'.$row['id'].'">'.$row['ver'].'</span></a></td>';
   echo '<td>'.number_format($filesize).'</td>';
   echo '<td>'.date("Y-m-d H:i:s",$filetime).'</td>';
   echo "</tr>\n";
